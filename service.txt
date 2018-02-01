@@ -1,0 +1,47 @@
+// test results
+			.state('bat-test-resutls', {
+				url: '/test/:company/:programming/results',
+				templateUrl: 'views/view-testprofile.html',
+				controller: 'learnStrategiesCtrl',
+				controllerAs: 'tc',
+				title: 'Learning Strategies',
+				showAccountLink: false,
+				showMenu: true
+			})
+			
+			
+	app.controller('learnStrategiesCtrl',function($stateParams,$scope,$http,learningStrategies) {
+	    
+    var company = $stateParams.company ? $stateParams.company : 0;
+    var programming = $stateParams.programming ? $stateParams.programming : 0;
+    
+    learningStrategies.getLearningStrategies().then(function(resp){
+    	
+    	//alert('ss');
+    	
+		//console.log('{getLearningStrategies} token : ['+$id+'], resp.apimessage : ['+resp.apimessage+']');
+		if(resp.apimessage=="OK") {
+			
+			$scope.result = resp.apivalue;
+			
+			//alert($scope.result);
+		} else {
+			$scope.result = 'Some weird error';
+		}		
+	})	
+});
+
+
+app.service('learningStrategies', function($http, $q){
+    return {    	
+    	getLearningStrategies: function(company,programming){
+        	return $http.get('http://devapi.talentaccurate.com/public/get/bat/test/:company'+company+'/:programming'+programming+'/results/json?apikey='+ API_KEY)
+        	.then(function(response){
+                    return response.data;
+                },function(response){
+                    return $q.reject(response.data);
+                });
+        }
+    }
+});
+
